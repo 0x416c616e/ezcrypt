@@ -53,6 +53,17 @@ import java.security.InvalidKeyException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.BadPaddingException;
 import org.apache.commons.io.FileUtils;
+import javafx.scene.control.Slider;
+import javafx.scene.text.*;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.stage.FileChooser;
+import javafx.scene.shape.Rectangle;
+
+
+
+
+
 
 //ezc_new123
 //all other versions are invalid
@@ -67,7 +78,26 @@ public class Main extends Application {
     HBox buttonBottomForBorder = new HBox();
     Button encryptButton;
     Button decryptButton;
-
+    Pane centerPane = new Pane();
+    Button websiteButton;
+    Text titleText;
+    Button aboutButton;
+    RadioButton encryptRadioButton;
+    RadioButton decryptRadioButton;
+    FileChooser fileChooser;
+    Button fileChooserButton;
+    Rectangle dragAndDropRectangle;
+    Button keyGeneratorButton;
+    Button submitButton;
+    Label keyLabel;
+    TextField keyField;
+    Button showHideButton;
+    Button copyToClipboardButton;
+    Button pasteFromClipboardButton;
+    Button clearClipboardButton;
+    Button clearKeyFieldButton;
+    Text sizeOfGeneratedKeys;
+    Text dragAndDropText;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //this is where the window is built, don't do anything else here
@@ -80,7 +110,17 @@ public class Main extends Application {
             Scene scene = new Scene(sPane); //to do pseudo-pop ups by pushing to top of stackpane
             primaryStage.setScene(scene);
             primaryStage.setTitle("Alan's EZcrypt");
-            //primaryStage.setResizable(false);
+            primaryStage.setResizable(false);
+            //not sure about the next line
+            //fileChooser = new FileChooser();
+            //fileChooser.setTitle("Click here to select file");
+            //fileChooser.getExtensionFilters().addAll(
+            //        new ExtensionFilter("Text Files", "*.txt"),
+            //        new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
+            //        new ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac"),
+            //        new ExtensionFilter("All Files", "*.*"));
+            //File selectedFile = fileChooser.showOpenDialog(primaryStage);
+
             primaryStage.show();
         } catch (Exception sfsdfgsdfg) {
             System.out.println(sfsdfgsdfg.getMessage());
@@ -88,20 +128,104 @@ public class Main extends Application {
     }
 
     public void buildUI() {
+        websiteButton = new Button("Website");
         encryptButton = new Button("Encrypt");
         decryptButton = new Button("Decrypt");
+        titleText = new Text(200, 40, "EZcrypt");
+        titleText.setFont(new Font(24));
+        centerPane.getChildren().add(titleText);
+        aboutButton = new Button("About");
+        aboutButton.relocate(425,40);
+        centerPane.getChildren().add(aboutButton);
+        ToggleGroup group = new ToggleGroup();
+        RadioButton encryptRadioButton = new RadioButton("Encrypt");
+        encryptRadioButton.setToggleGroup(group);
+        encryptRadioButton.setSelected(true);
+        RadioButton decryptRadioButton = new RadioButton("Decrypt");
+        decryptRadioButton.setToggleGroup(group);
+        encryptRadioButton.relocate(175,100);
+        decryptRadioButton.relocate(275, 100);
+        centerPane.getChildren().addAll(encryptRadioButton, decryptRadioButton);
+        fileChooserButton = new Button("Click here to select file");
+        fileChooserButton.relocate(175,125);
+        centerPane.getChildren().add(fileChooserButton);
+        submitButton = new Button("GO");
+        submitButton.setMinWidth(75);
+        submitButton.setMinHeight(75);
+        //submitButton.relocate(375,125);
+        submitButton.relocate(225,400);
+        centerPane.getChildren().add(submitButton);
+        //File selectedFile = fileChooser.showOpenDialog(primaryStage);
+        dragAndDropText = new Text("Or drag and drop file\nto this rectangle");
+        dragAndDropText.setFont(new Font(20));
+        dragAndDropText.relocate(175,190);
+        centerPane.getChildren().add(dragAndDropText);
+        dragAndDropRectangle = new Rectangle(100,170,300,100);
+        dragAndDropRectangle.setFill(Color.TRANSPARENT);
+        dragAndDropRectangle.setStroke(Color.BLACK);
+        centerPane.getChildren().add(dragAndDropRectangle);
+        keyLabel = new Label("Key:");
+        keyLabel.relocate(45,300);
+        centerPane.getChildren().add(keyLabel);
+        keyField = new TextField("");
+        keyField.setMinWidth(300);
+        keyField.relocate(100,300);
+        centerPane.getChildren().add(keyField);
+        showHideButton = new Button("Show/Hide");
+        showHideButton.relocate(405,300);
+        centerPane.getChildren().add(showHideButton);
+
+
+        copyToClipboardButton = new Button("Copy key to clipboard");
+        copyToClipboardButton.relocate(45, 340);
+        centerPane.getChildren().add(copyToClipboardButton);
+
+        pasteFromClipboardButton = new Button("Paste key from clipboard");
+        pasteFromClipboardButton.relocate(315,340);
+        centerPane.getChildren().add(pasteFromClipboardButton);
+        //Text sizeOfGeneratedKeys;
+        sizeOfGeneratedKeys = new Text(15, 400,"Size of generated keys:");
+        centerPane.getChildren().add(sizeOfGeneratedKeys);
+
+        clearClipboardButton = new Button("Clear clipboard");
+        clearClipboardButton.relocate(370, 400);
+        centerPane.getChildren().add(clearClipboardButton);
+
+        clearKeyFieldButton = new Button("Clear key field");
+        clearKeyFieldButton.relocate(375,435);
+        centerPane.getChildren().add(clearKeyFieldButton);
+        //Button clearKeyFieldButton;
+
+
+
         //bPane.add(hiding,);
         sPane.setMinWidth(500);
         sPane.setMinHeight(500);
-        buttonBottomForBorder.getChildren().add(encryptButton);
-        buttonBottomForBorder.getChildren().add(decryptButton);
-        bPane.setBottom(buttonBottomForBorder);
+
+
+        //encryptButton.relocate(100,100);
+        //decryptButton.relocate(200,100);
+        //centerPane.getChildren().add(encryptButton);
+        //centerPane.getChildren().add(decryptButton);
+
+        websiteButton.relocate(15,40);
+        centerPane.getChildren().add(websiteButton);
         //fileType1 = new Label("Host files: PNG, GIF, or JPG/JPEG only");
+        Slider slider = new Slider(32, 448, 448);
+        slider.setShowTickMarks(false);
+        slider.setShowTickLabels(true);
+        slider.setMajorTickUnit(32);
+        slider.setBlockIncrement(1);
+        slider.relocate(15,425);
+        centerPane.getChildren().add(slider);
+        keyGeneratorButton = new Button("Generate random key");
+        keyGeneratorButton.relocate(15,460);
+        centerPane.getChildren().add(keyGeneratorButton);
 
 
 
         //bPane.setCenter(gPane);
-
+        bPane.setCenter(centerPane);
 
     }
 
