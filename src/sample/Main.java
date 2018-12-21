@@ -4,11 +4,12 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -16,10 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+
 import java.io.*;
 import java.lang.Runtime;
 import java.nio.file.Files;
@@ -53,12 +51,11 @@ import java.security.InvalidKeyException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.BadPaddingException;
 import org.apache.commons.io.FileUtils;
-import javafx.scene.control.Slider;
 import javafx.scene.text.*;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.input.Clipboard;
+
 
 
 
@@ -98,6 +95,7 @@ public class Main extends Application {
     Button clearKeyFieldButton;
     Text sizeOfGeneratedKeys;
     Text dragAndDropText;
+    PasswordField keyPasswordField;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //this is where the window is built, don't do anything else here
@@ -242,6 +240,62 @@ public class Main extends Application {
         //this is where all the button functionality goes
         //however, the hiding and retrieving buttons call functions that are defined below
         //System.out.println("This is where the button setOnAction or lambdas go");
+        clearClipboardButton.setOnAction( e -> {
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+            final ClipboardContent blankClipboardContent = new ClipboardContent();
+            blankClipboardContent.putString("");
+            clipboard.setContent(blankClipboardContent);
+        });
+
+        copyToClipboardButton.setOnAction(e -> {
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+            final ClipboardContent keyFieldContent = new ClipboardContent();
+            keyFieldContent.putString(keyField.getText());
+            clipboard.setContent(keyFieldContent);
+        });
+
+        clearKeyFieldButton.setOnAction(e ->{
+            keyField.setText("");
+        });
+
+        pasteFromClipboardButton.setOnAction( e-> {
+            final Clipboard clipboard2 = Clipboard.getSystemClipboard();
+            keyField.setText(clipboard2.getString());
+        });
+
+
+        websiteButton.setOnAction( e -> {
+            getHostServices().showDocument("https://saintlouissoftware.com/");
+        });
+
+        aboutButton.setOnAction( e -> {
+            //f4f4f4
+            Rectangle overlayRectangle = new Rectangle(0,0,500,500);
+            overlayRectangle.setFill(Color.web("f4f4f4"));
+            centerPane.getChildren().add(overlayRectangle);
+            Text aboutText = new Text("This program was made by Alan. It is free\n" +
+                    "and open source, released under the GNU\n" +
+                    "GPLv3 license. This program is provided AS\n" +
+                    "IS, without warranty. It uses the Blowfish\n" +
+                    "encryption cipher. For more information,\n" +
+                    "click the website button in the upper left.");
+            aboutText.setFont(new Font(24));
+            aboutText.relocate(5,100);
+            Button goBackButton = new Button("Go back");
+            goBackButton.relocate(200,400);
+            centerPane.getChildren().add(aboutText);
+            centerPane.getChildren().add(goBackButton);
+            goBackButton.setOnAction(x -> {
+                centerPane.getChildren().remove(aboutText);
+                centerPane.getChildren().remove(goBackButton);
+                centerPane.getChildren().remove(overlayRectangle);
+
+            });
+
+        });
+
+
+
         encryptButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 System.out.println("Encrypting");
