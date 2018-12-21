@@ -1,6 +1,8 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -96,6 +98,9 @@ public class Main extends Application {
     Text sizeOfGeneratedKeys;
     Text dragAndDropText;
     PasswordField keyPasswordField;
+    boolean textFieldVisibility = true;
+    Slider slider;
+    public String globalFileName;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //this is where the window is built, don't do anything else here
@@ -166,9 +171,16 @@ public class Main extends Application {
         keyLabel.relocate(45,300);
         centerPane.getChildren().add(keyLabel);
         keyField = new TextField("");
+        keyPasswordField = new PasswordField();
         keyField.setMinWidth(300);
+        keyPasswordField.setMinWidth(300);
         keyField.relocate(100,300);
+        keyPasswordField.relocate(100,300);
+
         centerPane.getChildren().add(keyField);
+        keyPasswordField.setVisible(false);
+        centerPane.getChildren().add(keyPasswordField);
+
         showHideButton = new Button("Show/Hide");
         showHideButton.relocate(405,300);
         centerPane.getChildren().add(showHideButton);
@@ -209,11 +221,13 @@ public class Main extends Application {
         websiteButton.relocate(15,40);
         centerPane.getChildren().add(websiteButton);
         //fileType1 = new Label("Host files: PNG, GIF, or JPG/JPEG only");
-        Slider slider = new Slider(32, 448, 448);
+        slider = new Slider(32, 448, 448);
         slider.setShowTickMarks(false);
         slider.setShowTickLabels(true);
         slider.setMajorTickUnit(32);
+        slider.setMinorTickCount(0);
         slider.setBlockIncrement(1);
+        slider.setSnapToTicks(true);
         slider.relocate(15,425);
         centerPane.getChildren().add(slider);
         keyGeneratorButton = new Button("Generate random key");
@@ -250,22 +264,63 @@ public class Main extends Application {
         copyToClipboardButton.setOnAction(e -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent keyFieldContent = new ClipboardContent();
-            keyFieldContent.putString(keyField.getText());
-            clipboard.setContent(keyFieldContent);
+            if (textFieldVisibility == true) {
+                keyFieldContent.putString(keyField.getText());
+                clipboard.setContent(keyFieldContent);
+            } else { //passwordField
+                keyFieldContent.putString(keyPasswordField.getText());
+                clipboard.setContent(keyFieldContent);
+            }
+
         });
 
         clearKeyFieldButton.setOnAction(e ->{
             keyField.setText("");
+            keyPasswordField.setText("");
         });
 
         pasteFromClipboardButton.setOnAction( e-> {
             final Clipboard clipboard2 = Clipboard.getSystemClipboard();
-            keyField.setText(clipboard2.getString());
+            if (textFieldVisibility == true) {
+                keyField.setText(clipboard2.getString());
+            } else {
+                keyPasswordField.setText(clipboard2.getString());
+            }
         });
 
+        showHideButton.setOnAction(e -> {
+            //keyPasswordField
+            //textFieldVisibility
+            //keyField
+            if (textFieldVisibility == true) {
+                keyField.setVisible(false);
+                keyPasswordField.setText(keyField.getText());
+                keyPasswordField.setVisible(true);
+                textFieldVisibility = false;
+                //System.out.println("now password bullets are shown");
+            } else if (textFieldVisibility == false) {
+                keyField.setVisible(true);
+                keyPasswordField.setVisible(false);
+                keyField.setText(keyPasswordField.getText());
+                textFieldVisibility = true;
+            } else {
+                System.out.println("???");
+            }
+        });
 
         websiteButton.setOnAction( e -> {
             getHostServices().showDocument("https://saintlouissoftware.com/");
+        });
+
+        keyGeneratorButton.setOnAction(e -> {
+            if (textFieldVisibility) {
+                keyField.setText(String.valueOf(Math.round(slider.getValue())));
+            } else {
+                keyPasswordField.setText(String.valueOf(Math.round(slider.getValue())));
+            }
+        });
+        fileChooserButton.setOnAction( e -> {
+            chooseFile();
         });
 
         aboutButton.setOnAction( e -> {
@@ -425,6 +480,27 @@ public class Main extends Application {
             }
         });
 
+
+    }
+
+    public void chooseFile()
+    {
+        //final Image image;
+        String filePath = "";
+        FileChooser fileChooser = new FileChooser();
+
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.JPG)", "*.JPG");
+        FileChooser.ExtensionFilter extFilterjpg = new FileChooser.ExtensionFilter("jpg files (*.jpg)", "*.jpg");
+        FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.PNG)", "*.PNG");
+        FileChooser.ExtensionFilter extFilterpng = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterjpg, extFilterPNG, extFilterpng);
+
+        //Show open file dialog
+        File file = fileChooser.showOpenDialog(null);
+        filePath = file.getAbsolutePath();
+
+        globalFileName = filePath;
     }
 
 
