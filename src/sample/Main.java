@@ -490,11 +490,11 @@ public class Main extends Application {
         FileChooser fileChooser = new FileChooser();
 
         //Set extension filter
-        FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.JPG)", "*.JPG");
-        FileChooser.ExtensionFilter extFilterjpg = new FileChooser.ExtensionFilter("jpg files (*.jpg)", "*.jpg");
-        FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.PNG)", "*.PNG");
-        FileChooser.ExtensionFilter extFilterpng = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
-        fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterjpg, extFilterPNG, extFilterpng);
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Text Files", "*.txt"),
+                new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
+                new ExtensionFilter("Audio Files", "*.wav", "*.mp3", "*.aac", ".ogg", ".flac"),
+                new ExtensionFilter("All Files", "*.*"));
 
         //Show open file dialog
         File file = fileChooser.showOpenDialog(null);
