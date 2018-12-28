@@ -1,5 +1,7 @@
 # EZcrypt
 
+![EZcrypt Screenshot](https://raw.githubusercontent.com/0x416c616e/ezcrypt/master/visual_assets/ezcrypt_screenshot_dec_28_2018.png)
+
 ## What is EZcrypt?
 
 EZcrypt is a simple file encryption tool. It is intended to be used with FileHider and Abyss Dropper and other tools for a security project I'm working on. EZcrypt is a work in progress. And although it's intended to be used for a very specific security project, it can also be used more generally for file encryption and decryption.
