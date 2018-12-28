@@ -149,7 +149,7 @@ public class Main extends Application {
         ToggleGroup group = new ToggleGroup();
         RadioButton encryptRadioButton = new RadioButton("Encrypt");
         encryptRadioButton.setToggleGroup(group);
-        //encryptRadioButton.setSelected(true);
+        encryptRadioButton.setSelected(true);
         RadioButton decryptRadioButton = new RadioButton("Decrypt");
         decryptRadioButton.setToggleGroup(group);
         encryptRadioButton.relocate(175,100);
@@ -173,6 +173,7 @@ public class Main extends Application {
         dragAndDropRectangle.setFill(Color.TRANSPARENT);
         dragAndDropRectangle.setStroke(Color.BLACK);
         centerPane.getChildren().add(dragAndDropRectangle);
+        //look at this: https://docs.oracle.com/javafx/2/drag_drop/HelloDragAndDrop.java.html
         keyLabel = new Label("Key:");
         keySizeInfo = new Text("Keys must be 4-56 characters long (which is 32-448 bits)");
         keyLabel.relocate(45,300);
@@ -254,27 +255,128 @@ public class Main extends Application {
         //bPane.setCenter(gPane);
         bPane.setCenter(centerPane);
         submitButton.setOnAction( e -> {
-            if ((globalFileName != "") && (keyField.getText() != "")) {
-                System.out.println("hello");
-                System.out.println(encryptRadioButton.isSelected());
-                //see radio button status
-                if (encryptRadioButton.isSelected() && !(decryptRadioButton.isSelected())) {
-                    //encryption is selected, now need to encrypt
-                    System.out.println("got here");
-                    System.out.println("encrypting file: " + globalFileName);
-                    encryptFile(globalFileName, keyField.getText());
-                } else if (decryptRadioButton.isSelected() && !(encryptRadioButton.isSelected())) {
-                    //decryption is selected, now need to decrypt
-                    System.out.println("decryption will happen here, finish this later");
-                    System.out.println("attempting to decrypt file: " + globalFileName);
-                    System.out.println("using key: " + keyField.getText());
-                    decryptFile(globalFileName, keyField.getText());
-                } else {
-                    System.out.println("something went wrong with the radio buttons");
-                } //end of picking whether encrypting or decrypting based on radio buttons
-            } else {
-                System.out.println("filename and/or key is null, can't proceed with encryption/decryption");
-            }
+            //firstly check about filename, key length not too short, then key length not too long
+
+
+
+
+
+
+                //multiple error checks
+                if ( ((keyField.getText().length() <= 3) && (textFieldVisibility)) || ((keyPasswordField.getText().length() <= 3) && (!textFieldVisibility))) {
+                //checking if key is too short
+                    Rectangle overlayRectangle = new Rectangle(0, 0, 500, 500);
+                    overlayRectangle.setFill(Color.web("f4f4f4"));
+                    centerPane.getChildren().add(overlayRectangle);
+                    Text keyMinText = new Text("Error: key not long enough.");
+                    if (globalFileName == "") {
+                        keyMinText.setText("Error: key not long enough.\n" +
+                                "Error: no file selected.");
+                    }
+                    keyMinText.setFont(new Font(24));
+                    keyMinText.relocate(5, 100);
+                    Button goBackButton = new Button("Go back");
+                    goBackButton.relocate(200, 400);
+                    centerPane.getChildren().add(keyMinText);
+                    centerPane.getChildren().add(goBackButton);
+                    goBackButton.setOnAction(x -> {
+                        centerPane.getChildren().remove(keyMinText);
+                        centerPane.getChildren().remove(goBackButton);
+                        centerPane.getChildren().remove(overlayRectangle);
+
+                    });
+                } else if ( ((keyField.getText().length() > 56) && (textFieldVisibility)) || ((keyPasswordField.getText().length() > 56) && (!textFieldVisibility))) {
+                    //checking if key is too long
+                    Rectangle overlayRectangle = new Rectangle(0, 0, 500, 500);
+                    overlayRectangle.setFill(Color.web("f4f4f4"));
+                    centerPane.getChildren().add(overlayRectangle);
+                    Text keyMaxText = new Text("Error: key too long.");
+                    if (globalFileName == "") {
+                        keyMaxText.setText("Error: key too long.\n" +
+                                "Error: no file selected.");
+                    }
+                    keyMaxText.setFont(new Font(24));
+                    keyMaxText.relocate(5, 100);
+                    Button goBackButton = new Button("Go back");
+                    goBackButton.relocate(200, 400);
+                    centerPane.getChildren().add(keyMaxText);
+                    centerPane.getChildren().add(goBackButton);
+                    goBackButton.setOnAction(x -> {
+                        centerPane.getChildren().remove(keyMaxText);
+                        centerPane.getChildren().remove(goBackButton);
+                        centerPane.getChildren().remove(overlayRectangle);
+
+                    });
+                } else if (globalFileName == "") { //if no file is selected
+                    Rectangle overlayRectangle = new Rectangle(0, 0, 500, 500);
+                    overlayRectangle.setFill(Color.web("f4f4f4"));
+                    centerPane.getChildren().add(overlayRectangle);
+                    Text noFileText = new Text("Error: no file selected.");
+                    noFileText.setFont(new Font(24));
+                    noFileText.relocate(5, 100);
+                    Button goBackButton = new Button("Go back");
+                    goBackButton.relocate(200, 400);
+                    centerPane.getChildren().add(noFileText);
+                    centerPane.getChildren().add(goBackButton);
+                    goBackButton.setOnAction(x -> {
+                        centerPane.getChildren().remove(noFileText);
+                        centerPane.getChildren().remove(goBackButton);
+                        centerPane.getChildren().remove(overlayRectangle);
+
+                    });
+                } else { //finally no errors
+                    boolean finished = false;
+                    String whichOne = ""; //encryption or decryption
+                    if ((globalFileName != "") && (keyField.getText() != "")) {
+                        System.out.println("hello");
+                        System.out.println(encryptRadioButton.isSelected());
+                        //see radio button status
+                        if (encryptRadioButton.isSelected() && !(decryptRadioButton.isSelected())) {
+                            //encryption is selected, now need to encrypt
+                            System.out.println("got here");
+                            System.out.println("encrypting file: " + globalFileName);
+                            encryptFile(globalFileName, keyField.getText());
+                            finished = true;
+                            whichOne = "encryption";
+                        } else if (decryptRadioButton.isSelected() && !(encryptRadioButton.isSelected())) {
+                            //decryption is selected, now need to decrypt
+                            System.out.println("decryption will happen here, finish this later");
+                            System.out.println("attempting to decrypt file: " + globalFileName);
+                            System.out.println("using key: " + keyField.getText());
+                            decryptFile(globalFileName, keyField.getText());
+                            finished = true;
+                            whichOne = "decryption";
+                        } else {
+                            System.out.println("something went wrong with the radio buttons");
+                        } //end of picking whether encrypting or decrypting based on radio buttons
+                    } else {
+                        System.out.println("filename and/or key is null, can't proceed with encryption/decryption");
+                    }
+                    if (finished) {
+                        Rectangle overlayRectangle = new Rectangle(0, 0, 500, 500);
+                        overlayRectangle.setFill(Color.web("f4f4f4"));
+                        centerPane.getChildren().add(overlayRectangle);
+                        Text finishedText = new Text("File " + whichOne + " finished.");
+                        finishedText.setFont(new Font(24));
+                        finishedText.relocate(5, 100);
+                        Button goBackButton = new Button("OK");
+                        goBackButton.relocate(200, 400);
+                        centerPane.getChildren().add(finishedText);
+                        centerPane.getChildren().add(goBackButton);
+                        goBackButton.setOnAction(x -> {
+                            centerPane.getChildren().remove(finishedText);
+                            centerPane.getChildren().remove(goBackButton);
+                            centerPane.getChildren().remove(overlayRectangle);
+
+                        });
+                    }
+
+                }
+
+
+
+
+
 
         });
 
@@ -714,6 +816,22 @@ public class Main extends Application {
             System.out.println("illegal block size exception for decrypting");
         } catch (BadPaddingException badPadDecryptEx) {
             System.out.println("bad padding decryption file exception");
+            Rectangle overlayRectangle = new Rectangle(0, 0, 500, 500);
+            overlayRectangle.setFill(Color.web("f4f4f4"));
+            centerPane.getChildren().add(overlayRectangle);
+            Text badDecryptText = new Text("Error: invalid decryption key.");
+            badDecryptText.setFont(new Font(24));
+            badDecryptText.relocate(5, 100);
+            Button goBackButton = new Button("Go back");
+            goBackButton.relocate(200, 400);
+            centerPane.getChildren().add(badDecryptText);
+            centerPane.getChildren().add(goBackButton);
+            goBackButton.setOnAction(x -> {
+                centerPane.getChildren().remove(badDecryptText);
+                centerPane.getChildren().remove(goBackButton);
+                centerPane.getChildren().remove(overlayRectangle);
+
+            });
         }
         try {
             //now need to convert "decrypted" byte array to a File
