@@ -391,11 +391,8 @@ public class Main extends Application {
             //======================================end of test
             */
 
-            if (textFieldVisibility) {
-                keyField.setText(generatedKey);
-            } else {
-                keyPasswordField.setText(generatedKey);
-            }
+            keyField.setText(generatedKey);
+            keyPasswordField.setText(generatedKey);
         });
         fileChooserButton.setOnAction( e -> {
             chooseFile();
@@ -434,7 +431,7 @@ public class Main extends Application {
 
 
 
-
+        /*
         encryptButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 System.out.println("Encrypting");
@@ -566,7 +563,10 @@ public class Main extends Application {
                 //up to here
             }
         });
-
+        */
+        //I can probably delete the encryptButton and decryptButton stuff;
+        //that was just left over from my initial test program, before I added
+        //all the more complicated stuff for user-selected key and file
 
     }
 
