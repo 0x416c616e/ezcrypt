@@ -103,6 +103,7 @@ public class Main extends Application {
     Text keySizeInfo;
     Text typeOrGenerate;
     PasswordField keyPasswordField;
+    Label fileNameLabel;
     boolean textFieldVisibility = true;
     Slider slider;
     public String globalFileName = "";
@@ -179,6 +180,9 @@ public class Main extends Application {
         centerPane.getChildren().add(keySizeInfo);
         typeOrGenerate = new Text("Type your own text key or randomly generate one.");
         typeOrGenerate.relocate(100, 80);
+        fileNameLabel = new Label("File: ");
+        fileNameLabel.relocate(60,150);
+        centerPane.getChildren().add(fileNameLabel);
         centerPane.getChildren().add(typeOrGenerate);
         centerPane.getChildren().add(keyLabel);
         keyField = new TextField("");
@@ -396,6 +400,7 @@ public class Main extends Application {
         });
         fileChooserButton.setOnAction( e -> {
             chooseFile();
+            fileNameLabel.setText("File: " + globalFileName);
         });
 
 
