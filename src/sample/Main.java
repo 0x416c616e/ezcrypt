@@ -32,6 +32,7 @@ import javafx.scene.image.Image;
 import javafx.geometry.Pos;
 import javafx.scene.paint.Color;
 import java.util.Base64;
+import java.util.Random;
 import java.util.Scanner;
 import java.io.PrintWriter;
 import javafx.scene.shape.Rectangle;
@@ -57,6 +58,8 @@ import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.input.Clipboard;
+import java.security.SecureRandom;
+
 
 
 
@@ -97,6 +100,8 @@ public class Main extends Application {
     Button clearKeyFieldButton;
     Text sizeOfGeneratedKeys;
     Text dragAndDropText;
+    Text keySizeInfo;
+    Text typeOrGenerate;
     PasswordField keyPasswordField;
     boolean textFieldVisibility = true;
     Slider slider;
@@ -168,7 +173,13 @@ public class Main extends Application {
         dragAndDropRectangle.setStroke(Color.BLACK);
         centerPane.getChildren().add(dragAndDropRectangle);
         keyLabel = new Label("Key:");
+        keySizeInfo = new Text("Keys must be 4-56 characters long (which is 32-448 bits)");
         keyLabel.relocate(45,300);
+        keySizeInfo.relocate(60, 280);
+        centerPane.getChildren().add(keySizeInfo);
+        typeOrGenerate = new Text("Type your own text key or randomly generate one.");
+        typeOrGenerate.relocate(100, 80);
+        centerPane.getChildren().add(typeOrGenerate);
         centerPane.getChildren().add(keyLabel);
         keyField = new TextField("");
         keyPasswordField = new PasswordField();
@@ -221,13 +232,13 @@ public class Main extends Application {
         websiteButton.relocate(15,40);
         centerPane.getChildren().add(websiteButton);
         //fileType1 = new Label("Host files: PNG, GIF, or JPG/JPEG only");
-        slider = new Slider(32, 448, 448);
+        slider = new Slider(4, 56, 56);
         slider.setShowTickMarks(false);
         slider.setShowTickLabels(true);
-        slider.setMajorTickUnit(32);
+        slider.setMajorTickUnit(13);
         slider.setMinorTickCount(0);
         slider.setBlockIncrement(1);
-        slider.setSnapToTicks(true);
+        slider.setSnapToTicks(false);
         slider.relocate(15,425);
         centerPane.getChildren().add(slider);
         keyGeneratorButton = new Button("Generate random key");
@@ -251,6 +262,9 @@ public class Main extends Application {
                 } else if (decryptRadioButton.isSelected() && !(encryptRadioButton.isSelected())) {
                     //decryption is selected, now need to decrypt
                     System.out.println("decryption will happen here, finish this later");
+                    System.out.println("attempting to decrypt file: " + globalFileName);
+                    System.out.println("using key: " + keyField.getText());
+                    decryptFile(globalFileName, keyField.getText());
                 } else {
                     System.out.println("something went wrong with the radio buttons");
                 } //end of picking whether encrypting or decrypting based on radio buttons
@@ -259,6 +273,10 @@ public class Main extends Application {
             }
 
         });
+
+
+
+
     }
 
     public void customizeUI() {
@@ -333,10 +351,50 @@ public class Main extends Application {
         });
 
         keyGeneratorButton.setOnAction(e -> {
+            System.out.println("size of key: " + String.valueOf(Math.round(slider.getValue())));
+            int keyLength = (int)Math.round(slider.getValue());
+            String base64String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+            Random randomNumber = new SecureRandom();
+            String generatedKey = "";
+            for (int i = 0; i < keyLength; i++) {
+                int randomBase64 = randomNumber.nextInt(64); //0 to 63
+                generatedKey += base64String.charAt(randomBase64);
+            }
+
+
+            /*
+            System.out.println("Generating SecureRandom key");
+            SecureRandom random = new SecureRandom();
+            byte bytesArray[] = new byte[8*(int)Math.round(slider.getValue())];
+            random.nextBytes(bytesArray);
+            System.out.println(String.valueOf(bytesArray));
+            String secureRandomString = "";
+            try {
+                secureRandomString = new String(bytesArray, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                System.out.println("encoding issue");
+            }
+            System.out.println("secureRandomString is :" + secureRandomString);
+            */
+
+
+            /*//======================================testing
+            String doc = "whatever";
+            String doc2 = "";
+            try {
+                byte[] bytes = doc.getBytes("UTF-8");
+                doc2 = new String(bytes, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                System.out.println("encoding issue");
+            }
+            System.out.println("doc2: " + doc2);
+            //======================================end of test
+            */
+
             if (textFieldVisibility) {
-                keyField.setText(String.valueOf(Math.round(slider.getValue())));
+                keyField.setText(generatedKey);
             } else {
-                keyPasswordField.setText(String.valueOf(Math.round(slider.getValue())));
+                keyPasswordField.setText(generatedKey);
             }
         });
         fileChooserButton.setOnAction( e -> {
@@ -505,7 +563,7 @@ public class Main extends Application {
                 } catch (IOException decryptIOex) {
                     System.out.println("decryptIOex");
                 }
-
+                //up to here
             }
         });
 
@@ -610,6 +668,54 @@ public class Main extends Application {
             }
         }
 
+    }
+
+    public void decryptFile(String fileNameToDecrypt, String decryptionKey) {
+        System.out.println("Decrypting! I hope this actually works uwu");
+        String myDecryptionKey = decryptionKey;
+        byte[] myDecryptionKeyByteArray = myDecryptionKey.getBytes(); //converts encryption key to byte array
+        SecretKeySpec myKeySpec = new SecretKeySpec(myDecryptionKeyByteArray, "Blowfish");
+
+        Cipher decryptCipher = null;
+        try {
+            decryptCipher = Cipher.getInstance("Blowfish");
+        } catch(NoSuchAlgorithmException noSuchAlgoDecEx) {
+            System.out.println("noSuchAlgoDecEx");
+        } catch (NoSuchPaddingException noPadDecEx) {
+            System.out.println("no pad decrypt exception");
+        }
+        if (decryptCipher != null) {
+            try {
+                decryptCipher.init(Cipher.DECRYPT_MODE, myKeySpec);
+            } catch (InvalidKeyException invDecEx) {//InvalidKeyException
+                System.out.println("invalid decryption key");
+            }
+        } else {
+            System.out.println("decryptCipher null error");
+        }
+
+        byte[] fileDecryptionByteArray = null; //will take the file to be decrypted and turn to byte array
+        String decryptionFilename = fileNameToDecrypt;
+        File fileToDecrypt = new File(decryptionFilename);
+        try {
+            fileDecryptionByteArray = Files.readAllBytes(fileToDecrypt.toPath());
+        } catch (IOException decryptIOex) {
+            System.out.println("decryption IO error");
+        }
+        byte[] decrypted = null;
+        try {
+            decrypted = decryptCipher.doFinal(fileDecryptionByteArray);
+        } catch (IllegalBlockSizeException blockSizeDecryptEx) {
+            System.out.println("illegal block size exception for decrypting");
+        } catch (BadPaddingException badPadDecryptEx) {
+            System.out.println("bad padding decryption file exception");
+        }
+        try {
+            //now need to convert "decrypted" byte array to a File
+            FileUtils.writeByteArrayToFile(new File(fileNameToDecrypt), decrypted);
+        } catch (IOException decryptIOex) {
+            System.out.println("decryptIOex");
+        }
     }
 
 
