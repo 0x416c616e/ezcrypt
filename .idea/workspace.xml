@@ -6,7 +6,9 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="" />
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/src/sample/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Main.java" afterDir="false" />
+    </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -65,10 +67,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-97">
-              <caret line="75" column="34" lean-forward="true" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
+            <state relative-caret-position="246">
+              <caret line="596" column="74" selection-start-line="596" selection-start-column="74" selection-end-line="596" selection-end-column="74" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="method#handle#0;class#14708:18552" />
                 <element signature="e#20521#20522#0" expanded="true" />
                 <element signature="e#20549#20550#0" expanded="true" />
               </folding>
@@ -84,7 +87,6 @@
       <find>rectangle</find>
       <find>clipboard</find>
       <find>submitb</find>
-      <find>password</find>
       <find>textfield</find>
       <find>visibility</find>
       <find>visib</find>
@@ -92,6 +94,14 @@
       <find>settext</find>
       <find>+</find>
       <find>setonaction</find>
+      <find>encryptradio</find>
+      <find>password</find>
+      <find>passwordfield</find>
+      <find>keypasswordfield</find>
+      <find>keyField</find>
+      <find>keyfield.gettext</find>
+      <find>encryptRadioButton</find>
+      <find>encryptradiobutton</find>
     </findStrings>
   </component>
   <component name="FindManager">
@@ -138,7 +148,7 @@
     <property name="MemberChooser.sorted" value="false" />
     <property name="OverrideImplement.combined" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1545979776741" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1545983141507" />
     <property name="dynamic.classpath" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Project" />
@@ -259,7 +269,7 @@
       <window_info id="Image Layers" order="6" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.17324841" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.43821657" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -313,10 +323,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-97">
-          <caret line="75" column="34" lean-forward="true" selection-start-line="75" selection-start-column="34" selection-end-line="75" selection-end-column="34" />
+        <state relative-caret-position="246">
+          <caret line="596" column="74" selection-start-line="596" selection-start-column="74" selection-end-line="596" selection-end-column="74" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#handle#0;class#14708:18552" />
             <element signature="e#20521#20522#0" expanded="true" />
             <element signature="e#20549#20550#0" expanded="true" />
           </folding>

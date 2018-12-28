@@ -81,8 +81,8 @@ public class Main extends Application {
     Button websiteButton;
     Text titleText;
     Button aboutButton;
-    RadioButton encryptRadioButton;
-    RadioButton decryptRadioButton;
+    RadioButton encryptRadioButton = new RadioButton("Encrypt");
+    RadioButton decryptRadioButton = new RadioButton("Decrypt");
     FileChooser fileChooser;
     Button fileChooserButton;
     Rectangle dragAndDropRectangle;
@@ -100,7 +100,7 @@ public class Main extends Application {
     PasswordField keyPasswordField;
     boolean textFieldVisibility = true;
     Slider slider;
-    public String globalFileName;
+    public String globalFileName = "";
     @Override
     public void start(Stage primaryStage) throws Exception{
         //this is where the window is built, don't do anything else here
@@ -143,7 +143,7 @@ public class Main extends Application {
         ToggleGroup group = new ToggleGroup();
         RadioButton encryptRadioButton = new RadioButton("Encrypt");
         encryptRadioButton.setToggleGroup(group);
-        encryptRadioButton.setSelected(true);
+        //encryptRadioButton.setSelected(true);
         RadioButton decryptRadioButton = new RadioButton("Decrypt");
         decryptRadioButton.setToggleGroup(group);
         encryptRadioButton.relocate(175,100);
@@ -238,7 +238,27 @@ public class Main extends Application {
 
         //bPane.setCenter(gPane);
         bPane.setCenter(centerPane);
+        submitButton.setOnAction( e -> {
+            if ((globalFileName != "") && (keyField.getText() != "")) {
+                System.out.println("hello");
+                System.out.println(encryptRadioButton.isSelected());
+                //see radio button status
+                if (encryptRadioButton.isSelected() && !(decryptRadioButton.isSelected())) {
+                    //encryption is selected, now need to encrypt
+                    System.out.println("got here");
+                    System.out.println("encrypting file: " + globalFileName);
+                    encryptFile(globalFileName, keyField.getText());
+                } else if (decryptRadioButton.isSelected() && !(encryptRadioButton.isSelected())) {
+                    //decryption is selected, now need to decrypt
+                    System.out.println("decryption will happen here, finish this later");
+                } else {
+                    System.out.println("something went wrong with the radio buttons");
+                } //end of picking whether encrypting or decrypting based on radio buttons
+            } else {
+                System.out.println("filename and/or key is null, can't proceed with encryption/decryption");
+            }
 
+        });
     }
 
     public void customizeUI() {
@@ -323,6 +343,8 @@ public class Main extends Application {
             chooseFile();
         });
 
+
+
         aboutButton.setOnAction( e -> {
             //f4f4f4
             Rectangle overlayRectangle = new Rectangle(0,0,500,500);
@@ -348,6 +370,10 @@ public class Main extends Application {
             });
 
         });
+
+        //button for encryption/decryption
+
+
 
 
 
@@ -427,6 +453,9 @@ public class Main extends Application {
 
                     }
                 }
+
+
+                //blah
             }
         });
         decryptButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -501,6 +530,86 @@ public class Main extends Application {
         filePath = file.getAbsolutePath();
 
         globalFileName = filePath;
+    }
+
+
+    public void encryptFile(String fileNameToEncrypt, String encryptionKey) {
+        System.out.println("Encrypting");
+        boolean noPaddingError = true;
+        boolean noAlgoError = true;
+        boolean noKeyError = true;
+        boolean nofileByteArrayIOError = true;
+        Cipher encryptionCipher = null;
+        try {
+            String myKey = encryptionKey; //replace with getting PasswordField.getText();
+            byte[] myKeyByteArray = myKey.getBytes(); //converts encryption key to byte array
+            System.out.println("myKey toString: " +myKey.toString());
+            SecretKeySpec myKeySpec = new SecretKeySpec(myKeyByteArray, "Blowfish");
+            try {
+                encryptionCipher = Cipher.getInstance("Blowfish");
+            } catch (NoSuchPaddingException padEx) {
+                System.out.println("no such padding exception");
+                noPaddingError = false;
+            }
+            if (noPaddingError) {
+                try {
+                    encryptionCipher.init(Cipher.ENCRYPT_MODE, myKeySpec);
+                } catch (InvalidKeyException keyEx) {
+                    System.out.println("invalid key exception");
+                    noKeyError = false;
+                }
+            }
+        } catch (NoSuchAlgorithmException algoEx) {
+            System.out.println("no such encryption algo");
+            noAlgoError = false;
+        }
+        //
+        if (noPaddingError == false || noAlgoError == false || noKeyError == false) {
+            System.out.println("something went wrong");
+        } else {
+            //actually doing the file encryption
+            String filename = fileNameToEncrypt; //from argument
+            //try {
+
+            File fileToEncrypt = new File(filename);
+
+            //} catch (IOException fileEx) {
+            //    System.out.println("IO error with filename: " + filename);
+            //}
+            byte[] fileByteArray = null;
+            try {
+                fileByteArray = Files.readAllBytes(fileToEncrypt.toPath());
+
+
+
+            } catch (IOException ioEx) {
+                System.out.println("file IO exception with filename: " + filename);
+                nofileByteArrayIOError = false;
+            }
+
+            if (nofileByteArrayIOError) {
+                try {
+                    byte[] encryptedOutput = encryptionCipher.doFinal(fileByteArray);
+                    //now the byte array needs to be converted to a file
+                    //TO-DO: CONVERT encryptedOutput TO FILE, THEN WRITE TO DISK
+                    //THEN TEST WITH BCRYPT FOR TESTING DECRYPTION
+                    //IF IT WORKS, THEN MOVE ON TO THE decryptButton.SetOnAction stuff
+                    FileUtils.writeByteArrayToFile(new File(globalFileName), encryptedOutput);
+                    System.out.println("wew you got here");
+                } catch (IllegalBlockSizeException blockEx) {
+                    System.out.println("illegal block size exception");
+                } catch (BadPaddingException badPadEx) {
+                    System.out.println("bad padding exception");
+                } catch (IOException ioExc) {
+                    System.out.println("io exception");
+                }
+
+            } else {
+                System.out.println("there was a file byte array error, not proceeding");
+
+            }
+        }
+
     }
 
 
