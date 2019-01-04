@@ -1,3 +1,8 @@
+//I'm Alan and welcome to my Java program.
+//This is the program entry point for EZcrypt, a program for encrypting and decrypting files.
+//I was doing a programming book exercise and it mentioned adding comments to other projects,
+//so here is a comment to fulfill that requirement.
+
 package sample;
 
 import javafx.application.Application;
@@ -808,18 +813,56 @@ public class Main extends Application {
             fileDecryptionByteArray = Files.readAllBytes(fileToDecrypt.toPath());
         } catch (IOException decryptIOex) {
             System.out.println("decryption IO error");
+
+            Rectangle overlayRectangle = new Rectangle(0, 0, 500, 500);
+            overlayRectangle.setFill(Color.web("f4f4f4"));
+            centerPane.getChildren().add(overlayRectangle);
+            Text badDecryptText = new Text("Error while decrypting, possibly bad file.\n" +
+                    "IOException");
+            badDecryptText.setFont(new Font(24));
+            badDecryptText.relocate(5, 100);
+            Button goBackButton = new Button("Go back");
+            goBackButton.relocate(200, 400);
+            centerPane.getChildren().add(badDecryptText);
+            centerPane.getChildren().add(goBackButton);
+            goBackButton.setOnAction(x -> {
+                centerPane.getChildren().remove(badDecryptText);
+                centerPane.getChildren().remove(goBackButton);
+                centerPane.getChildren().remove(overlayRectangle);
+
+            });
         }
         byte[] decrypted = null;
         try {
             decrypted = decryptCipher.doFinal(fileDecryptionByteArray);
         } catch (IllegalBlockSizeException blockSizeDecryptEx) {
-            System.out.println("illegal block size exception for decrypting");
+            System.out.println("IllegalBlockSizeException");
+
+            Rectangle overlayRectangle = new Rectangle(0, 0, 500, 500);
+            overlayRectangle.setFill(Color.web("f4f4f4"));
+            centerPane.getChildren().add(overlayRectangle);
+            Text badDecryptText = new Text("Error while decrypting, possibly bad key.\n" +
+                    "Illegal block size exception");
+            badDecryptText.setFont(new Font(24));
+            badDecryptText.relocate(5, 100);
+            Button goBackButton = new Button("Go back");
+            goBackButton.relocate(200, 400);
+            centerPane.getChildren().add(badDecryptText);
+            centerPane.getChildren().add(goBackButton);
+            goBackButton.setOnAction(x -> {
+                centerPane.getChildren().remove(badDecryptText);
+                centerPane.getChildren().remove(goBackButton);
+                centerPane.getChildren().remove(overlayRectangle);
+
+            });
+
         } catch (BadPaddingException badPadDecryptEx) {
             System.out.println("bad padding decryption file exception");
             Rectangle overlayRectangle = new Rectangle(0, 0, 500, 500);
             overlayRectangle.setFill(Color.web("f4f4f4"));
             centerPane.getChildren().add(overlayRectangle);
-            Text badDecryptText = new Text("Error: invalid decryption key.");
+            Text badDecryptText = new Text("Error while decrypting, possibly bad key.\n" +
+                    "Bad padding decryption file exception");
             badDecryptText.setFont(new Font(24));
             badDecryptText.relocate(5, 100);
             Button goBackButton = new Button("Go back");
