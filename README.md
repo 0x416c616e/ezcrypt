@@ -10,4 +10,10 @@ EZcrypt is made in Java and JavaFX. It uses Blowfish encryption to encrypt files
 
 ## JAR
 
-If you want to download the standalone .JAR file (the easiest way to run this program), instead of dealing with source code files, then download it from [here](https://github.com/0x416c616e/ezcrypt/raw/master/out/artifacts/ezc_new123_jar2/ezc_new123.jar). It requires Java to run.
+If you want to download the standalone .JAR file (the easiest way to run this program), instead of dealing with source code files, then download it from [here](https://github.com/0x416c616e/ezcrypt/raw/master/out/artifacts/ezc_new123_jar2/ezc_new123.jar). It requires **Java 8** to run. 
+
+How to run a jar program in a terminal/command prompt/etc:
+
+```
+java -jar jarname
+```
